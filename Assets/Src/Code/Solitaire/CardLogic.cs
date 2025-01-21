@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Src.Code.Solitaire
 {
-    public class CardLogic : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler, IPointerClickHandler
+    public class CardLogic : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler//, IPointerClickHandler
     {
         [SerializeField] private Card _card;
         private Vector2 _previousPosition;
@@ -67,14 +67,24 @@ namespace Assets.Src.Code.Solitaire
                 .OnComplete(() => SoundController.Instance.PlayCardSetSound());
         }
 
-        public void OnPointerClick(PointerEventData eventData)
+        public void GetCardFromDeck()
         {
-            if (_card.IsDeckCard)
-            {
+            //if (_card.IsDeckCard)
+            //{
                 _card.SwitchCardSide();
                 SetCardToHand();
                 _card.SpriteRenderer.sprite = _card.CardSprite;
-            }
+            //}
         }
+
+        //public void OnPointerClick(PointerEventData eventData)
+        //{
+        //    if (_card.IsDeckCard)
+        //    {
+        //        _card.SwitchCardSide();
+        //        SetCardToHand();
+        //        _card.SpriteRenderer.sprite = _card.CardSprite;
+        //    }
+        //}
     }
 }

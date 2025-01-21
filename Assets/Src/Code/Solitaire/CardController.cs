@@ -45,7 +45,7 @@ namespace Assets.Src.Code.Solitaire
         }
 
         private void IncreaseCardHolderPositionFrequency()
-        => _cardHolderPositionFrequency += 0.05f;
+        => _cardHolderPositionFrequency += 0.005f;
 
         public bool CheckCardHolder(int identifier)
         {
@@ -64,21 +64,19 @@ namespace Assets.Src.Code.Solitaire
 
         private void CheckPossibilityToFlipCard(int id)
         {
-            _cardHolderPositionFrequency += 0.005f;
+            IncreaseCardHolderPositionFrequency();
 
-            if (id == 0)
+            Debug.LogError(id);
+
+            if (id == 0) // first
                 CheckCardId(0, 1, 10);
-            else if (id == 9)
+            else if (id == 9) // first
                 CheckCardId(8, 9, 18);
-            else if (id == 10)
-                CheckCardId(10, 11, 19);
-            else if (id == 18)
-                CheckCardId(17, 18, 24);
-            else if (id == 19 || id == 20)
+            else if (id == 19 || id == 20) // fourth
                 CheckCardId(19, 20, 25);
-            else if (id == 21 || id == 22)
+            else if (id == 21 || id == 22) // fourth
                 CheckCardId(21, 22, 26);
-            else if (id == 23 || id == 24)
+            else if (id == 23 || id == 24) // fourth
                 CheckCardId(23, 24, 27);
             else if (id < 10)
             {
@@ -87,10 +85,46 @@ namespace Assets.Src.Code.Solitaire
             }
             else if (id < 19)
             {
-                CheckCardId(id - 1, id, id + 7);
-                CheckCardId(id, id + 1, id + 8);
+                if (id == 10)
+                {
+                    CheckCardId(10, 11, 19);
+                }
+                else if (id == 11)
+                {
+                    CheckCardId(10, 11, 19);
+                    CheckCardId(11, 12, 20);
+                }
+                else if (id == 12)
+                {
+                    CheckCardId(11, 12, 20);
+                }
+                else if (id == 13)
+                {
+                    CheckCardId(13, 14, 21);
+                }
+                else if (id == 14)
+                {
+                    CheckCardId(13, 14, 21);
+                    CheckCardId(14, 15, 22);
+                }
+                else if (id == 15)
+                {
+                    CheckCardId(14, 15, 22);
+                }
+                else if (id == 16)
+                {
+                    CheckCardId(16, 17, 23);
+                }
+                else if (id == 17)
+                {
+                    CheckCardId(16, 17, 23);
+                    CheckCardId(17, 18, 24);
+                }
+                else if (id == 18)
+                {
+                    CheckCardId(17, 18, 24);
+                }
             }
-            else Debug.LogError("This card from the deck");
         }
 
         private void OpenCard(int id)
@@ -101,6 +135,7 @@ namespace Assets.Src.Code.Solitaire
             if (_cardSpawner.CardDictionary[firstId].IsCardSet
             && _cardSpawner.CardDictionary[secondId].IsCardSet)
             {
+                Debug.LogError($"first id: [{firstId}] second id: [{secondId}]  open id [{openId}]");
                 OpenCard(openId);
             }
         }

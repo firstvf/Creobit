@@ -7,6 +7,7 @@ namespace Assets.Src.Code.Solitaire
     public class Card : MonoBehaviour
     {
         [field: SerializeField] public SpriteRenderer SpriteRenderer { get; private set; }
+        [field: SerializeField] public CardLogic CardLogic{ get; private set; }
         public int Identifier { get; private set; }
         public bool IsCardSet { get; private set; }
         public int InitialSortingLayer { get; private set; }

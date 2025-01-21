@@ -151,6 +151,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   <SpriteRenderer>k__BackingField: {fileID: 2590637806145034850}
+  <CardLogic>k__BackingField: {fileID: 4611326559261140007}
 --- !u!1 &5912031116962831626
 GameObject:
   m_ObjectHideFlags: 0
