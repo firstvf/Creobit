@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Assets.Src.Code.Solitaire
 {
-    public class CardLogic : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler//, IPointerClickHandler
+    public class CardLogic : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         [SerializeField] private Card _card;
         private Vector2 _previousPosition;
@@ -44,7 +44,7 @@ namespace Assets.Src.Code.Solitaire
                 return;
             }
 
-            // Если карту не положили в правильное место
+            // wrong spot
             SetCardToPosition(_previousPosition, _card.InitialSortingLayer);
         }
 
@@ -69,22 +69,9 @@ namespace Assets.Src.Code.Solitaire
 
         public void GetCardFromDeck()
         {
-            //if (_card.IsDeckCard)
-            //{
-                _card.SwitchCardSide();
-                SetCardToHand();
-                _card.SpriteRenderer.sprite = _card.CardSprite;
-            //}
+            _card.SwitchCardSide();
+            SetCardToHand();
+            _card.SpriteRenderer.sprite = _card.CardSprite;
         }
-
-        //public void OnPointerClick(PointerEventData eventData)
-        //{
-        //    if (_card.IsDeckCard)
-        //    {
-        //        _card.SwitchCardSide();
-        //        SetCardToHand();
-        //        _card.SpriteRenderer.sprite = _card.CardSprite;
-        //    }
-        //}
     }
 }

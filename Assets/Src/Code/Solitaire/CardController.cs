@@ -31,7 +31,6 @@ namespace Assets.Src.Code.Solitaire
 
         private void Start()
         {
-            //OnCardTurnHandler += IncreaseCardHolderPositionFrequency;
             OnCardTurnHandler += CheckPossibilityToFlipCard;
             _isAnyCardPlace = false;
             _cardHolderSortingLayer = 0;
