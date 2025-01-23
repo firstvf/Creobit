@@ -7,7 +7,7 @@ namespace Assets.Src.Code.Solitaire
     public class Card : MonoBehaviour
     {
         [field: SerializeField] public SpriteRenderer SpriteRenderer { get; private set; }
-        [field: SerializeField] public CardLogic CardLogic{ get; private set; }
+        [field: SerializeField] public CardLogic CardLogic { get; private set; }
         public int Identifier { get; private set; }
         public bool IsCardSet { get; private set; }
         public int InitialSortingLayer { get; private set; }
@@ -35,6 +35,18 @@ namespace Assets.Src.Code.Solitaire
             if (parent != null)
                 transform.DOMove(parent.transform.position, 0.1f)
                     .OnComplete(() => SortCardAction(isRequireToTurnCard, parent));
+        }
+
+        // 
+        public void UndoAction() // UNDO METHOD
+        {
+            CardController.Instance.OnMoveHandler?.Invoke();
+            var rect = GetComponent<RectTransform>();
+
+            rect.anchoredPosition = Vector2.zero;
+
+            if (IsDeckCard)
+                SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
         }
 
         public void TurnCard(bool isRequireToTween = false)

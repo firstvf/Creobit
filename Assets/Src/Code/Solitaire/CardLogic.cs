@@ -38,7 +38,7 @@ namespace Assets.Src.Code.Solitaire
         {
             if (CheckCardPossibility()) return;
 
-            if (_isCollideWithCardHolder && CardController.Instance.CheckCardHolder(_card.Identifier))
+            if (_isCollideWithCardHolder && CardController.Instance.CheckPossibilityToPlaceOnHand(_card.Identifier))
             {
                 SetCardToHand();
                 return;
@@ -51,9 +51,10 @@ namespace Assets.Src.Code.Solitaire
         private void SetCardToHand()
         {
             _card.SwitchCardSet(true);
-            int sortingLayer = CardController.Instance.SetToCardHolder(_card.Identifier);
+            int sortingLayer = CardController.Instance.SetCardToHand(_card.Identifier);
             SetCardToPosition(CardController.Instance.GetCardHolderPosition(), sortingLayer);
             CardController.Instance.OnCardTurnHandler?.Invoke(_card.Id);
+            CardController.Instance.OnMoveHandler?.Invoke();
         }
 
         private bool CheckCardPossibility()
