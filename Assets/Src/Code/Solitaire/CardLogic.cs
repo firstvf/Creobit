@@ -8,22 +8,15 @@ namespace Assets.Src.Code.Solitaire
     public class CardLogic : MonoBehaviour, IBeginDragHandler, IEndDragHandler, IDragHandler
     {
         [SerializeField] private Card _card;
-        private Vector2 _previousPosition;
         private bool _isCollideWithCardHolder;
-
-        private void OnTriggerEnter2D(Collider2D collision)
-        => _isCollideWithCardHolder = true;
-
-        private void OnTriggerExit2D(Collider2D collision)
-        => _isCollideWithCardHolder = false;
-
+        private int SORTING_LAYER;
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (CheckCardPossibility()) return;
 
             transform.DOScale(1.5f, 0.25f)
                 .OnStart(() => SoundController.Instance.PlayCardDealSound());
-            _previousPosition = transform.position;
+            _card.SetStartPosition(transform.position);
             _card.SpriteRenderer.sortingOrder = 200;
         }
 
@@ -45,16 +38,28 @@ namespace Assets.Src.Code.Solitaire
             }
 
             // wrong spot
-            SetCardToPosition(_previousPosition, _card.InitialSortingLayer);
+            SetCardToPosition(_card.StartPosition, _card.InitialSortingLayer);
+        }
+
+        public void GetCardFromDeck()
+        {
+            _card.TryKillUndoTween();
+            SetCardToHand();
+            _card.SwitchCardSide();
+            _card.SpriteRenderer.sprite = _card.CardSprite;
         }
 
         private void SetCardToHand()
         {
-            _card.SwitchCardSet(true);
-            int sortingLayer = CardController.Instance.SetCardToHand(_card.Identifier);
-            SetCardToPosition(CardController.Instance.GetCardHolderPosition(), sortingLayer);
-            CardController.Instance.OnCardTurnHandler?.Invoke(_card.Id);
+            _card.SwitchCardSet(true);            
+            int sortingLayer = CardController.Instance.Hand.GetSortingLayer();
+
+            SORTING_LAYER = sortingLayer;
+
+            SetCardToPosition(CardController.Instance.Hand.GetHandPosition(), sortingLayer);
             CardController.Instance.OnMoveHandler?.Invoke();
+
+            CardController.Instance.OnCardTurnHandler?.Invoke(_card.Id);
         }
 
         private bool CheckCardPossibility()
@@ -65,14 +70,20 @@ namespace Assets.Src.Code.Solitaire
             _card.SpriteRenderer.sortingOrder = sortingOrder;
             transform.DOScale(1f, 0.25f);
             transform.DOMove(position, 0.2f)
-                .OnComplete(() => SoundController.Instance.PlayCardSetSound());
+                .OnStart(() => _card.SetCardRayCast(false))
+                .OnComplete(() => DoneMoveAction());
         }
 
-        public void GetCardFromDeck()
+        private void DoneMoveAction()
         {
-            _card.SwitchCardSide();
-            SetCardToHand();
-            _card.SpriteRenderer.sprite = _card.CardSprite;
+            SoundController.Instance.PlayCardSetSound();
+            _card.SetCardRayCast(true);
         }
+
+        private void OnTriggerEnter2D(Collider2D collision)
+        => _isCollideWithCardHolder = true;
+
+        private void OnTriggerExit2D(Collider2D collision)
+        => _isCollideWithCardHolder = false;
     }
 }

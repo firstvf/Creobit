@@ -1,6 +1,10 @@
 ﻿using Assets.Src.Code.Controllers;
 using DG.Tweening;
+using DG.Tweening.Core;
+using DG.Tweening.Plugins.Options;
+using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Assets.Src.Code.Solitaire
 {
@@ -15,12 +19,18 @@ namespace Assets.Src.Code.Solitaire
         public bool IsBackSide { get; private set; }
         public Sprite CardSprite { get; private set; }
         public bool IsDeckCard { get; private set; }
+        public Vector3 StartPosition { get; private set; }
+        [SerializeField] private Image _image;
+        public Tween _undoTween { get; private set; }
 
         public void SwitchCardSet(bool isSet) => IsCardSet = isSet;
-        public void SwitchCardSide() => IsBackSide = IsDeckCard = false;
+        public void SwitchCardSide() => IsBackSide = false;
+        public void SetCardRayCast(bool isAble) => _image.raycastTarget = isAble;
+        public void SetStartPosition(Vector3 position) => StartPosition = position;
 
         public void InitCard(Sprite sprite, int identifier)
         {
+            SetCardRayCast(false);
             IsBackSide = true;
             SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
             CardSprite = sprite;
@@ -37,32 +47,53 @@ namespace Assets.Src.Code.Solitaire
                     .OnComplete(() => SortCardAction(isRequireToTurnCard, parent));
         }
 
-        // 
-        public void UndoAction() // UNDO METHOD
+        public void TryKillUndoTween()
         {
-            CardController.Instance.OnMoveHandler?.Invoke();
-            var rect = GetComponent<RectTransform>();
-
-            rect.anchoredPosition = Vector2.zero;
-
-            if (IsDeckCard)
-                SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
+            if (_undoTween.IsActive())
+            {
+                Debug.Log("kill tween");
+                _undoTween.Kill();
+            }
         }
 
-        public void TurnCard(bool isRequireToTween = false)
+        public void UndoAction()
         {
-            if (IsBackSide == true)
+            IsCardSet = false;
+            SpriteRenderer.sortingOrder = InitialSortingLayer;
+
+            if (IsDeckCard)
+            {
+                IsBackSide = true;
+                SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
+
+                _undoTween = transform.DOLocalMove(StartPosition, 0.15f)
+                    .OnStart(() => SetCardRayCast(false))
+                    .OnComplete(() => SetCardRayCast(true));
+            }
+            else
+            {
+                transform.DOMove(StartPosition, 0.15f)
+                    .OnStart(() => SetCardRayCast(false))
+                    .OnComplete(() => SetCardRayCast(true));
+            }
+
+            CardController.Instance.OnMoveHandler?.Invoke();
+        }
+
+        public void TurnCard(bool isRequireToTween = false, bool isUndoAction = false)
+        {
+            if (isUndoAction || IsBackSide == false)
+            {
+                IsBackSide = true;
+                SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
+            }
+            else if (IsBackSide == true)
             {
                 if (!isRequireToTween)
                     TurnAroundCardAction();
                 else transform.DOPunchScale(Vector2.up, 0.1f, 5, 0.5f)
                         .OnStart(() => SoundController.Instance.PlayCardTurnAroundSound())
                         .OnComplete(() => TurnAroundCardAction());
-            }
-            else
-            {
-                IsBackSide = true;
-                SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
             }
         }
 
@@ -72,6 +103,7 @@ namespace Assets.Src.Code.Solitaire
             transform.SetParent(parent);
             if (isRequireToTurnCard)
                 TurnCard();
+            StartPosition = transform.position;
         }
 
         private void TurnAroundCardAction()

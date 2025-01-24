@@ -602,7 +602,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3d9500e9e3a65ff4e9bd824cba7ea843, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _undoButton: {fileID: 1604877661}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -1414,7 +1413,6 @@ RectTransform:
   - {fileID: 1717202297}
   - {fileID: 871845194}
   - {fileID: 527131015}
-  - {fileID: 1604877664}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1438,6 +1436,7 @@ MonoBehaviour:
   _movesCounterText: {fileID: 527131018}
   _continueButton: {fileID: 1771576937}
   _restartButton: {fileID: 592575682}
+  _undoButton: {fileID: 1604877661}
   _disableInputScreen: {fileID: 1717202294}
   _endGameScreen: {fileID: 825673301}
   _endGameText: {fileID: 1245891728}
@@ -1584,7 +1583,7 @@ MonoBehaviour:
   <CardBackSideSprite>k__BackingField: {fileID: 21300000, guid: 14127f26d5f8b3f4482c0407bf17958d, type: 3}
   <IsRequireFastSet>k__BackingField: 1
   <CardSpawner>k__BackingField: {fileID: 168880518}
-  _hand: {fileID: 421215264}
+  <Hand>k__BackingField: {fileID: 421215269}
   _cardDeck: {fileID: 666531740}
 --- !u!4 &1279460232
 Transform:
@@ -1818,8 +1817,8 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 227051795}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.85}
-  m_AnchorMax: {x: 0.5, y: 0.85}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -1933,6 +1932,7 @@ RectTransform:
   - {fileID: 227051795}
   - {fileID: 421215264}
   - {fileID: 168880517}
+  - {fileID: 1604877664}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -2156,7 +2156,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 575363608}
-  m_Father: {fileID: 1098960479}
+  m_Father: {fileID: 1407826043}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.1}
   m_AnchorMax: {x: 0.5, y: 0.1}

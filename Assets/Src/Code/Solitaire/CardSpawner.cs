@@ -38,7 +38,6 @@ namespace Assets.Src.Code.Solitaire
             var list = _cardPooler.GetList().OrderBy((x) => Random.value).ToList();
             for (int i = 0; i < list.Count; i++)
             {
-                list[i].gameObject.name = "card " + i;
                 CardDictionary.Add(i, list[i]);
             }
         }
@@ -60,6 +59,13 @@ namespace Assets.Src.Code.Solitaire
                 yield return new WaitForSeconds(1.8f);
             else yield return null;
             StartCoroutine(GroupCards(10, 190, _firstCardGroup, true, 0));
+
+            yield return new WaitForSeconds(2f);
+
+            for (int i = 0; i < CardDictionary.Count; i++)
+            {
+                CardDictionary[i].SetCardRayCast(true);
+            }
         }
 
         private IEnumerator GroupCards(int count, int sortingLayer, Transform group, bool isRequireToTurnCard, int startingId)
