@@ -6,8 +6,20 @@ namespace Assets.Src.Code.Solitaire
 {
     public class CardDeck : MonoBehaviour, IPointerClickHandler
     {
-        public bool IsCardDeckEmpty { get; private set; }
         private int _topCardId = 51; // top id card deck
+        public bool IsCardDeckEmpty { get; private set; }
+
+        private void Start()
+        {
+            CardController.Instance.Hand.OnUndoCardFromHandHandler += UndoAction;
+        }
+
+        private void UndoAction(int id)
+        {
+            if (_topCardId < 51)
+                _topCardId++;
+            IsCardDeckEmpty = false;
+        }
 
         public void GetCard()
         {
@@ -24,6 +36,11 @@ namespace Assets.Src.Code.Solitaire
         public void OnPointerClick(PointerEventData eventData)
         {
             GetCard();
+        }
+
+        private void OnDestroy()
+        {
+            CardController.Instance.Hand.OnUndoCardFromHandHandler -= UndoAction;
         }
     }
 }

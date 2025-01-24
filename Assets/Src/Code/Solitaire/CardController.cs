@@ -6,19 +6,14 @@ namespace Assets.Src.Code.Solitaire
     public class CardController : MonoBehaviour
     {
         public static CardController Instance { get; private set; }
-        public bool IsAnyCardPlaced { get; private set; }
         public Action<int> OnCardTurnHandler { get; set; }
         public Action OnMoveHandler { get; set; }
         public Action<bool> OnUnavailableMoveHandler { get; set; }
         [field: SerializeField] public Sprite CardBackSideSprite { get; private set; }
         [field: SerializeField] public bool IsRequireFastSet { get; private set; }
         [field: SerializeField] public CardSpawner CardSpawner { get; private set; }
-
-        [SerializeField] private Transform _hand;
+        [field: SerializeField] public Hand Hand { get; private set; }
         [SerializeField] private CardDeck _cardDeck;
-        private int _currentHandIdentifier;
-        private int _handSortingLayer;
-        private float _handPositionFrequency;
 
         private void Awake()
         {
@@ -34,26 +29,18 @@ namespace Assets.Src.Code.Solitaire
         private void Start()
         {
             OnCardTurnHandler += CheckPossibilityToFlipCard;
-            OnMoveHandler += IncreaseCardHolderPositionFrequency;
-            IsAnyCardPlaced = false;
-            _handSortingLayer = 0;
-        }
-
-        public Vector2 GetCardHolderPosition()
-        {
-            return new Vector2(
-                _hand.transform.position.x + _handPositionFrequency,
-                _hand.transform.position.y + _handPositionFrequency);
+            Hand.OnUndoCardFromHandHandler += UndoAction;
+            Hand.OnUndoCardFromHandHandler += CheckPossibilityToFlipCard;
         }
 
         public bool CheckPossibilityToPlaceOnHand(int identifier)
         {
-            if (IsAnyCardPlaced == false) return true;
+            if (Hand.CheckIsAnyCardPlaced() == false) return true;
 
-            if (identifier + 1 == _currentHandIdentifier
-               || identifier - 1 == _currentHandIdentifier
-               || identifier == 1 && _currentHandIdentifier == 13
-               || identifier == 13 && _currentHandIdentifier == 1)
+            if (identifier + 1 == GetIdentifier()
+               || identifier - 1 == GetIdentifier()
+               || identifier == 1 && GetIdentifier() == 13
+               || identifier == 13 && GetIdentifier() == 1)
             {
                 return true;
             }
@@ -61,8 +48,16 @@ namespace Assets.Src.Code.Solitaire
             return false;
         }
 
-        public void FindAnyAvailableMove()
+        private int GetIdentifier()
+        => CardSpawner.CardDictionary[Hand.GetLastCardId()].Identifier;
+
+        private void UndoAction(int id)
+        => CardSpawner.CardDictionary[id].UndoAction();
+
+        private void FindAnyAvailableMove()
         {
+            Debug.Log("FIND ANY AVAILABLE MOVE");
+
             bool isAnyMoveAvailable = false;
 
             for (int i = 0; i < CardSpawner.CardDictionary.Count; i++)
@@ -76,12 +71,11 @@ namespace Assets.Src.Code.Solitaire
                 }
             }
 
-
             if (isAnyMoveAvailable == false)
             {
                 for (int i = 0; i < CardSpawner.CardDictionary.Count; i++)
-                    if (CardSpawner.CardDictionary[i].IsCardSet
-                        || CardSpawner.CardDictionary[i].IsDeckCard)
+                    if (CardSpawner.CardDictionary[i].IsCardSet == false
+                        && CardSpawner.CardDictionary[i].IsDeckCard == false)
                     {
                         OnUnavailableMoveHandler?.Invoke(false);
                         return;
@@ -91,19 +85,20 @@ namespace Assets.Src.Code.Solitaire
             }
         }
 
-        public int SetCardToHand(int identifier)
+        private bool CheckIsAnyCardOnDesk()
         {
-            _handSortingLayer++;
-            IsAnyCardPlaced = true;
-            _currentHandIdentifier = identifier;
-            return _handSortingLayer;
+            for (int i = 0; i < CardSpawner.CardDictionary.Count; i++)
+                if (CardSpawner.CardDictionary[i].IsCardSet == false
+                    && CardSpawner.CardDictionary[i].IsDeckCard == false)
+                {
+                    return false;
+                }
+
+            return true;
         }
 
         private void CheckPossibilityToFlipCard(int id)
         {
-            if (_cardDeck.IsCardDeckEmpty)
-                FindAnyAvailableMove();
-
             if (id == 0) // first
                 TryOpenCard(0, 1, 10);
             else if (id == 9) // first
@@ -161,6 +156,13 @@ namespace Assets.Src.Code.Solitaire
                     TryOpenCard(17, 18, 24);
                 }
             }
+
+
+
+            if (_cardDeck.IsCardDeckEmpty || (CheckIsAnyCardOnDesk() && _cardDeck.IsCardDeckEmpty == false))
+            {
+                FindAnyAvailableMove();
+            }
         }
 
         private void TryOpenCard(int firstId, int secondId, int openId)
@@ -168,17 +170,19 @@ namespace Assets.Src.Code.Solitaire
             if (CardSpawner.CardDictionary[firstId].IsCardSet
             && CardSpawner.CardDictionary[secondId].IsCardSet)
             {
-                CardSpawner.CardDictionary[openId].TurnCard(true);
+                CardSpawner.CardDictionary[openId].TurnCard(isRequireToTween: true);
+            }
+            else
+            {
+                CardSpawner.CardDictionary[openId].TurnCard(isUndoAction: true);
             }
         }
-
-        private void IncreaseCardHolderPositionFrequency()
-        => _handPositionFrequency += 0.005f;
 
         private void OnDestroy()
         {
             OnCardTurnHandler -= CheckPossibilityToFlipCard;
-            OnMoveHandler -= IncreaseCardHolderPositionFrequency;
+            Hand.OnUndoCardFromHandHandler -= UndoAction;
+            Hand.OnUndoCardFromHandHandler -= CheckPossibilityToFlipCard;
         }
     }
 }

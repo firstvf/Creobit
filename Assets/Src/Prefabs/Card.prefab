@@ -36,8 +36,8 @@ RectTransform:
   - {fileID: 4290974319396504143}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.15}
-  m_AnchorMax: {x: 0.5, y: 0.15}
+  m_AnchorMin: {x: 0.5, y: 0.5}
+  m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 100, y: 150}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -152,6 +152,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <SpriteRenderer>k__BackingField: {fileID: 2590637806145034850}
   <CardLogic>k__BackingField: {fileID: 4611326559261140007}
+  _image: {fileID: 5596366026358549326}
 --- !u!1 &5912031116962831626
 GameObject:
   m_ObjectHideFlags: 0
