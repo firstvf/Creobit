@@ -56,8 +56,6 @@ namespace Assets.Src.Code.Solitaire
 
         private void FindAnyAvailableMove()
         {
-            Debug.Log("FIND ANY AVAILABLE MOVE");
-
             bool isAnyMoveAvailable = false;
 
             for (int i = 0; i < CardSpawner.CardDictionary.Count; i++)
@@ -157,12 +155,8 @@ namespace Assets.Src.Code.Solitaire
                 }
             }
 
-
-
             if (_cardDeck.IsCardDeckEmpty || (CheckIsAnyCardOnDesk() && _cardDeck.IsCardDeckEmpty == false))
-            {
                 FindAnyAvailableMove();
-            }
         }
 
         private void TryOpenCard(int firstId, int secondId, int openId)

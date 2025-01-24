@@ -9,7 +9,7 @@ namespace Assets.Src.Code.Solitaire
     {
         [SerializeField] private Card _card;
         private bool _isCollideWithCardHolder;
-        private int SORTING_LAYER;
+        
         public void OnBeginDrag(PointerEventData eventData)
         {
             if (CheckCardPossibility()) return;
@@ -43,7 +43,6 @@ namespace Assets.Src.Code.Solitaire
 
         public void GetCardFromDeck()
         {
-            _card.TryKillUndoTween();
             SetCardToHand();
             _card.SwitchCardSide();
             _card.SpriteRenderer.sprite = _card.CardSprite;
@@ -53,8 +52,6 @@ namespace Assets.Src.Code.Solitaire
         {
             _card.SwitchCardSet(true);            
             int sortingLayer = CardController.Instance.Hand.GetSortingLayer();
-
-            SORTING_LAYER = sortingLayer;
 
             SetCardToPosition(CardController.Instance.Hand.GetHandPosition(), sortingLayer);
             CardController.Instance.OnMoveHandler?.Invoke();

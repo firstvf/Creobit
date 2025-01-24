@@ -1,8 +1,5 @@
 ﻿using Assets.Src.Code.Controllers;
 using DG.Tweening;
-using DG.Tweening.Core;
-using DG.Tweening.Plugins.Options;
-using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -21,7 +18,6 @@ namespace Assets.Src.Code.Solitaire
         public bool IsDeckCard { get; private set; }
         public Vector3 StartPosition { get; private set; }
         [SerializeField] private Image _image;
-        public Tween _undoTween { get; private set; }
 
         public void SwitchCardSet(bool isSet) => IsCardSet = isSet;
         public void SwitchCardSide() => IsBackSide = false;
@@ -47,15 +43,6 @@ namespace Assets.Src.Code.Solitaire
                     .OnComplete(() => SortCardAction(isRequireToTurnCard, parent));
         }
 
-        public void TryKillUndoTween()
-        {
-            if (_undoTween.IsActive())
-            {
-                Debug.Log("kill tween");
-                _undoTween.Kill();
-            }
-        }
-
         public void UndoAction()
         {
             IsCardSet = false;
@@ -66,7 +53,7 @@ namespace Assets.Src.Code.Solitaire
                 IsBackSide = true;
                 SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
 
-                _undoTween = transform.DOLocalMove(StartPosition, 0.15f)
+                transform.DOLocalMove(StartPosition, 0.15f)
                     .OnStart(() => SetCardRayCast(false))
                     .OnComplete(() => SetCardRayCast(true));
             }

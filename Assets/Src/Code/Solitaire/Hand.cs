@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -21,6 +21,7 @@ namespace Assets.Src.Code.Solitaire
 
         public bool CheckIsAnyCardPlaced() => _handList.Count > 0;
         public int GetLastCardId() => _handList[^1];
+
         public int GetSortingLayer()
         {
             _handSortingLayer++;
@@ -41,19 +42,18 @@ namespace Assets.Src.Code.Solitaire
             if (CheckIsAnyCardPlaced() && _isUndoReady == false)
             {
                 _isUndoReady = true;
-                StartCoroutine(UndoCooldownCoroutine());
+                UndoCooldownCoroutine().Forget();
                 _positionFrequency -= 0.005f;
                 _handSortingLayer--;
 
                 OnUndoCardFromHandHandler?.Invoke(GetLastCardId());
-
                 _handList.Remove(GetLastCardId());
             }
         }
 
-        private IEnumerator UndoCooldownCoroutine()
+        private async UniTaskVoid UndoCooldownCoroutine()
         {
-            yield return new WaitForSeconds(0.5f);
+            await UniTask.Delay(250);
             _isUndoReady = false;
         }
 
