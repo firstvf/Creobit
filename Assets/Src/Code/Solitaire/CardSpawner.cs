@@ -1,6 +1,6 @@
 ﻿using Assets.Src.Code.Data.Bundle;
 using Assets.Src.Code.Pool;
-using System.Collections;
+using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -22,7 +22,7 @@ namespace Assets.Src.Code.Solitaire
             CreatePack();
             MixCardDeck();
 
-            StartCoroutine(DealCards());
+            DealCards().Forget();
         }
 
         private void CreatePack()
@@ -42,25 +42,21 @@ namespace Assets.Src.Code.Solitaire
             }
         }
 
-        private IEnumerator DealCards()
+        private async UniTaskVoid DealCards()
         {
             GroupCards(24, 150, 28);
 
-            StartCoroutine(GroupCards(3, 160, _fourthCardGroup, false, 25));
-            if (!CardController.Instance.IsRequireFastSet)
-                yield return new WaitForSeconds(0.5f);
-            else yield return null;
-            StartCoroutine(GroupCards(6, 170, _thirdCardGroup, false, 19));
-            if (!CardController.Instance.IsRequireFastSet)
-                yield return new WaitForSeconds(1f);
-            else yield return null;
-            StartCoroutine(GroupCards(9, 180, _secondCardGroup, false, 10));
-            if (!CardController.Instance.IsRequireFastSet)
-                yield return new WaitForSeconds(1.8f);
-            else yield return null;
-            StartCoroutine(GroupCards(10, 190, _firstCardGroup, true, 0));
+            GroupCards(3, 160, _fourthCardGroup, false, 25).Forget();
+            await UniTask.Delay(500);
+            GroupCards(6, 170, _thirdCardGroup, false, 19).Forget();
+            await UniTask.Delay(800);
 
-            yield return new WaitForSeconds(2f);
+            GroupCards(9, 180, _secondCardGroup, false, 10).Forget();
+            await UniTask.Delay(1400);
+
+            GroupCards(10, 190, _firstCardGroup, true, 0).Forget();
+
+            await UniTask.Delay(2000);
 
             for (int i = 0; i < CardDictionary.Count; i++)
             {
@@ -68,14 +64,14 @@ namespace Assets.Src.Code.Solitaire
             }
         }
 
-        private IEnumerator GroupCards(int count, int sortingLayer, Transform group, bool isRequireToTurnCard, int startingId)
+        private async UniTaskVoid GroupCards(int count, int sortingLayer, Transform group, bool isRequireToTurnCard, int startingId)
         {
             for (int i = 0; i < count; i++)
             {
                 var card = CardDictionary[startingId + i];
                 card.gameObject.SetActive(true);
                 card.SortCard(sortingLayer, isRequireToTurnCard, i + startingId, group);
-                yield return new WaitForSeconds(0.15f);
+                await UniTask.Delay(150);
             }
         }
 

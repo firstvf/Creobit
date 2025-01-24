@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -24,6 +25,21 @@ namespace Assets.Src.Code.Solitaire.UI
             _continueButton.onClick.AddListener(ContinueGame);
             _restartButton.onClick.AddListener(RestartGame);
             _undoButton.onClick.AddListener(CardController.Instance.Hand.Undo);
+
+            Timer().Forget();
+        }
+
+        private async UniTaskVoid Timer()
+        {
+            int time = 0;
+            while (true)
+            {
+                await UniTask.Delay(1000);
+                time++;
+                int minutes = Mathf.FloorToInt(time / 60f);
+                int seconds = Mathf.FloorToInt(time % 60f);
+                _timerText.text = $"{minutes:00}:{seconds:00}";
+            }
         }
 
         private void ChangeMovesCounter()
@@ -34,20 +50,16 @@ namespace Assets.Src.Code.Solitaire.UI
 
         private void ContinueGame()
         {
-            Debug.Log("Continue game");
             _endGameScreen.gameObject.SetActive(false);
         }
 
         private void RestartGame()
         {
-            Debug.Log("Restart game");
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
 
         private void GameOver(bool isWinGame)
         {
-            Debug.Log("IS game over? " + isWinGame);
-
             if (isWinGame)
                 _endGameText.text = "Win";
             else
