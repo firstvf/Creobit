@@ -9,14 +9,16 @@ namespace Assets.Src.Code.Solitaire
     {
         [field: SerializeField] public SpriteRenderer SpriteRenderer { get; private set; }
         [field: SerializeField] public CardLogic CardLogic { get; private set; }
+        public Sprite CardSprite { get; private set; }
+        public Vector3 StartPosition { get; private set; }
         public int Identifier { get; private set; }
-        public bool IsCardSet { get; private set; }
         public int InitialSortingLayer { get; private set; }
         public int Id { get; private set; }
+        public bool IsCardSet { get; private set; }
         public bool IsBackSide { get; private set; }
-        public Sprite CardSprite { get; private set; }
         public bool IsDeckCard { get; private set; }
-        public Vector3 StartPosition { get; private set; }
+        public int SpriteDataIdentifier { get; private set; }
+
         [SerializeField] private Image _image;
 
         public void SwitchCardSet(bool isSet) => IsCardSet = isSet;
@@ -24,13 +26,14 @@ namespace Assets.Src.Code.Solitaire
         public void SetCardRayCast(bool isAble) => _image.raycastTarget = isAble;
         public void SetStartPosition(Vector3 position) => StartPosition = position;
 
-        public void InitCard(Sprite sprite, int identifier)
+        public void InitCard(Sprite sprite, int identifier, int spriteDataIdentifier)
         {
             SetCardRayCast(false);
             IsBackSide = true;
             SpriteRenderer.sprite = CardController.Instance.CardBackSideSprite;
             CardSprite = sprite;
             Identifier = identifier;
+            SpriteDataIdentifier = spriteDataIdentifier;
         }
 
         public void SortCard(int initialSortingLayer, bool isRequireToTurnCard, int id, Transform parent = null, bool isDeckCard = false)
@@ -39,7 +42,7 @@ namespace Assets.Src.Code.Solitaire
             Id = id;
             InitialSortingLayer = initialSortingLayer;
             if (parent != null)
-                transform.DOMove(parent.transform.position, 0.1f)
+                transform.DOMove(parent.transform.position, 0.05f)
                     .OnComplete(() => SortCardAction(isRequireToTurnCard, parent));
         }
 

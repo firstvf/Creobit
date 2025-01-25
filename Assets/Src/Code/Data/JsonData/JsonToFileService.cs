@@ -3,13 +3,22 @@ using System;
 using UnityEngine;
 using Newtonsoft.Json;
 
-namespace Assets.Src.Code.Data
+namespace Assets.Src.Code.Data.JsonData
 {
     public class JsonToFileService : IDataService
     {
+        public bool CheckData(string key)
+        {
+            if (File.Exists(BuildPath(key)))
+                return true;
+            else return false;
+        }
+
         public void Load<T>(string key, Action<T> callback)
         {
             string path = BuildPath(key);
+
+            Debug.Log("Load: " + path);
 
             using (var fileStream = new StreamReader(path))
             {
@@ -23,6 +32,8 @@ namespace Assets.Src.Code.Data
         {
             string path = BuildPath(key);
             string json = JsonConvert.SerializeObject(data);
+
+            Debug.Log("Save: " + path);
 
             using (var fileStream = new StreamWriter(path))
             {

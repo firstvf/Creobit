@@ -5,7 +5,7 @@ namespace Assets.Src.Code.Pool
 {
     public class ObjectPooler<T> where T : MonoBehaviour
     {
-        private readonly List<T> _poolList;
+        public readonly List<T> PoolList;
         private readonly Transform _container;
         private readonly T _prefab;
 
@@ -13,12 +13,10 @@ namespace Assets.Src.Code.Pool
         {
             _prefab = prefab;
             _container = container;
-            _poolList = new List<T>();
+            PoolList = new List<T>();
 
             CreatePool(count);
         }
-
-        public List<T> GetList() => _poolList;
 
         public T GetFreeObjectFromPool()
         {
@@ -39,14 +37,14 @@ namespace Assets.Src.Code.Pool
         {
             var prefab = Object.Instantiate(_prefab, _container);
             prefab.gameObject.SetActive(isActiveByDefault);
-            _poolList.Add(prefab);
+            PoolList.Add(prefab);
 
             return prefab;
         }
 
         private bool HasFreeObject(out T prefab)
         {
-            foreach (var obj in _poolList)
+            foreach (var obj in PoolList)
                 if (!obj.gameObject.activeInHierarchy)
                 {
                     prefab = obj;
