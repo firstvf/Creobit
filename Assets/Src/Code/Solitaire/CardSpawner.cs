@@ -11,13 +11,13 @@ namespace Assets.Src.Code.Solitaire
     public class CardSpawner : MonoBehaviour, IData
     {
         public readonly Dictionary<int, Card> CardDictionary = new();
+        public bool IsInitialize { get; private set; }
 
         [SerializeField] private Transform _firstCardGroup, _secondCardGroup, _thirdCardGroup, _fourthCardGroup;
         [SerializeField] private Transform _cardDeck, _cardHand;
         [SerializeField] private Card _cardPrefab;
         [SerializeField] private CardBundle _bundle;
         private ObjectPooler<Card> _cardPooler;
-        private bool _isInitialize;
         private const string CARD_DATA_KEY = "CardData";
 
         public void StartGame()
@@ -43,7 +43,7 @@ namespace Assets.Src.Code.Solitaire
 
         public void Save()
         {
-            if (_isInitialize)
+            if (IsInitialize)
             {
                 Dictionary<int, int> cardDictionary = new();
 
@@ -96,7 +96,7 @@ namespace Assets.Src.Code.Solitaire
 
         private async UniTaskVoid DealCards()
         {
-            _isInitialize = true;
+            IsInitialize = true;
 
             GroupCards(24, 150, 28);
 

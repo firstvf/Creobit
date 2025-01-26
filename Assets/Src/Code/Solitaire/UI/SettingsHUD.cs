@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Src.Code.Controllers;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
@@ -9,23 +10,17 @@ namespace Assets.Src.Code.Solitaire.UI
         [SerializeField] private GameObject _settingsScreen;
         [SerializeField] private GameObject _startChoiceScreen;
         [Space]
-        [SerializeField] private Button _openSettings;
-        [SerializeField] private Button _continue;
-        [SerializeField] private Button _menu;
-        [SerializeField] private Button _restart;
-        [SerializeField] private Button _save;
-        [SerializeField] private Button _newGame;
-        [SerializeField] private Button _loadGame;
+        [SerializeField]
+        private Button _openSettings, _continue, _menu, _newGame, _loadGame, _clickerGame;
 
         private void Start()
         {
             _continue.onClick.AddListener(Continue);
             _menu.onClick.AddListener(Menu);
-            _restart.onClick.AddListener(Restart);
-            _save.onClick.AddListener(Save);
             _newGame.onClick.AddListener(NewGame);
             _loadGame.onClick.AddListener(LoadGame);
             _openSettings.onClick.AddListener(OpenSettingsHud);
+            _clickerGame.onClick.AddListener(LoadClickerGame);
         }
 
         private void OpenSettingsHud()
@@ -41,13 +36,16 @@ namespace Assets.Src.Code.Solitaire.UI
         }
 
         private void Menu()
-        => SceneManager.LoadScene(0);
+        {
+            _menu.onClick.RemoveAllListeners();
+            SceneManager.LoadScene(0);
+        }
 
-        private void Restart()
-        => SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-
-        private void Save()
-        => CardController.Instance.Save();
+        private void LoadClickerGame()
+        {
+            _clickerGame.onClick.RemoveAllListeners();
+            AssetLoader.Instance.LoadClicker();
+        }
 
         private void NewGame()
         {
@@ -66,12 +64,11 @@ namespace Assets.Src.Code.Solitaire.UI
         private void OnDestroy()
         {
             _continue.onClick.RemoveListener(Continue);
-            _menu.onClick.RemoveListener(Menu);
-            _restart.onClick.RemoveListener(Restart);
-            _save.onClick.RemoveListener(Save);
+            _menu.onClick.RemoveAllListeners();
             _newGame.onClick.RemoveListener(NewGame);
             _loadGame.onClick.RemoveListener(LoadGame);
             _openSettings.onClick.RemoveListener(OpenSettingsHud);
+            _clickerGame.onClick.RemoveAllListeners();
         }
     }
 }
