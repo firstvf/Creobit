@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default
   m_GUID: 443818b13071b6a4a9476633d8197d9f
   m_SerializeEntries:
+  - m_GUID: 0241e3af7274c2343a5f0b3510745f8d
+    m_Address: Assets/Src/Sprites/pause_icon.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5a5ab60aedf8cbb4e90349c64fbabb18
     m_Address: Assets/Src/Sprites/background_2.png
     m_ReadOnly: 0
