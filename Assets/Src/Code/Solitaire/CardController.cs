@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Assets.Src.Code.Data.JsonData;
+using Assets.Src.Code.Solitaire.UI;
+using System;
 using UnityEngine;
 
 namespace Assets.Src.Code.Solitaire
@@ -6,14 +8,16 @@ namespace Assets.Src.Code.Solitaire
     public class CardController : MonoBehaviour
     {
         public static CardController Instance { get; private set; }
+        public readonly IDataService DataService = new JsonToFileService();
+        public Action<bool> OnLoadingDataHandler { get; set; }
         public Action<int> OnCardTurnHandler { get; set; }
         public Action OnMoveHandler { get; set; }
         public Action<bool> OnUnavailableMoveHandler { get; set; }
         [field: SerializeField] public Sprite CardBackSideSprite { get; private set; }
-        [field: SerializeField] public bool IsRequireFastSet { get; private set; }
         [field: SerializeField] public CardSpawner CardSpawner { get; private set; }
         [field: SerializeField] public Hand Hand { get; private set; }
-        [SerializeField] private CardDeck _cardDeck;
+        [field: SerializeField] public CardDeck CardDeck { get; private set; }
+        [field: SerializeField] public GameHUD GameHud { get; private set; }
 
         private void Awake()
         {
@@ -33,6 +37,15 @@ namespace Assets.Src.Code.Solitaire
             Hand.OnUndoCardFromHandHandler += CheckPossibilityToFlipCard;
         }
 
+        public void StartGame(bool isRequireToLoadGame)
+        {
+            if (isRequireToLoadGame)
+            {
+                Load();
+            }
+            else CardSpawner.StartGame();
+        }
+
         public bool CheckPossibilityToPlaceOnHand(int identifier)
         {
             if (Hand.CheckIsAnyCardPlaced() == false) return true;
@@ -46,6 +59,20 @@ namespace Assets.Src.Code.Solitaire
             }
 
             return false;
+        }
+
+        public void Save()
+        {
+            CardSpawner.Save();
+            Hand.Save();
+            GameHud.Save();
+        }
+
+        private void Load()
+        {
+            CardSpawner.Load();
+            Hand.Load();
+            GameHud.Load();
         }
 
         private int GetIdentifier()
@@ -97,15 +124,15 @@ namespace Assets.Src.Code.Solitaire
 
         private void CheckPossibilityToFlipCard(int id)
         {
-            if (id == 0) // first
+            if (id == 0)
                 TryOpenCard(0, 1, 10);
-            else if (id == 9) // first
+            else if (id == 9)
                 TryOpenCard(8, 9, 18);
-            else if (id == 19 || id == 20) // fourth
+            else if (id == 19 || id == 20)
                 TryOpenCard(19, 20, 25);
-            else if (id == 21 || id == 22) // fourth
+            else if (id == 21 || id == 22)
                 TryOpenCard(21, 22, 26);
-            else if (id == 23 || id == 24) // fourth
+            else if (id == 23 || id == 24)
                 TryOpenCard(23, 24, 27);
             else if (id < 10)
             {
@@ -155,7 +182,7 @@ namespace Assets.Src.Code.Solitaire
                 }
             }
 
-            if (_cardDeck.IsCardDeckEmpty || (CheckIsAnyCardOnDesk() && _cardDeck.IsCardDeckEmpty == false))
+            if (CardDeck.IsCardDeckEmpty || (CheckIsAnyCardOnDesk() && CardDeck.IsCardDeckEmpty == false))
                 FindAnyAvailableMove();
         }
 
@@ -174,6 +201,9 @@ namespace Assets.Src.Code.Solitaire
 
         private void OnDestroy()
         {
+            if (CardSpawner.IsInitialize)
+                Save();
+
             OnCardTurnHandler -= CheckPossibilityToFlipCard;
             Hand.OnUndoCardFromHandHandler -= UndoAction;
             Hand.OnUndoCardFromHandHandler -= CheckPossibilityToFlipCard;
