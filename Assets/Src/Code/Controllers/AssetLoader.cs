@@ -28,14 +28,32 @@ namespace Assets.Src.Code.Controllers
         {
             await UniTask.Delay(1000);
 
-            await Addressables.LoadSceneAsync(_solitaireScene, LoadSceneMode.Single);
+            try
+            {
+                await _solitaireScene.LoadSceneAsync();
+            }
+            catch (System.Exception)
+            {
+                Debug.Log("<color=green>Asset reference is null. Load by path</color>");
+                await Addressables.LoadSceneAsync("Assets/Src/Scenes/Solitaire.unity", LoadSceneMode.Single);
+                throw;
+            }
         }
 
         public async void LoadClicker()
         {
             await UniTask.Delay(1000);
 
-            await _clickerScene.LoadSceneAsync();
+            try
+            {
+                await _clickerScene.LoadSceneAsync();
+            }
+            catch (System.Exception)
+            {
+                Debug.Log("<color=green>Asset reference is null. Load by path</color>");
+                await Addressables.LoadSceneAsync("Assets/Src/Scenes/Clicker.unity", LoadSceneMode.Single);
+                throw;
+            }
         }
     }
 }
