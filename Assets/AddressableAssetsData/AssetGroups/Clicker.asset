@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: Clicker
   m_GUID: 493d54758835aa64bbd334b29717fa13
   m_SerializeEntries:
-  - m_GUID: 10977f317ee717d49806fa92bb2493aa
-    m_Address: Assets/Src/Sprites/Clicker/hamster.png
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 15dd093220acd154e9026326b5ba4b77
     m_Address: Assets/Src/Scenes/Clicker.unity
     m_ReadOnly: 0
@@ -37,6 +32,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 688429ff6fd05f9459a6abb2e3917515
     m_Address: Assets/Src/Prefabs/Coin.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ab28818021d27be43b7835a583cee444
+    m_Address: Assets/Src/Sprites/Clicker/hamster.png
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
